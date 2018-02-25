@@ -91,6 +91,9 @@ public class Home extends AppCompatActivity
 
         getCategories();
 
+        Intent intent = new Intent(Home.this, ListenOrder.class);
+        startService(intent);
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
