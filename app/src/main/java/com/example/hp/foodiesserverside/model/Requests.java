@@ -11,7 +11,8 @@ public class Requests {
     public String name;
     public String address;
     public String status;
-        public String total;
+    public String total;
+    public String comment;
     public List<Order> orders;
 
 

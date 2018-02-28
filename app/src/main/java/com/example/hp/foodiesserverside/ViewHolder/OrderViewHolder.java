@@ -21,6 +21,7 @@ View.OnCreateContextMenuListener{
     public TextView orderStatus;
     public TextView orderPhone;
     public TextView orderAddress;
+    public ImageView showDetails;
     private ItemClickListener itemClickListener;
 
     private View view;
@@ -31,10 +32,12 @@ View.OnCreateContextMenuListener{
         orderStatus= itemView.findViewById(R.id.order_status);
         orderAddress= itemView.findViewById(R.id.order_address);
         orderPhone= itemView.findViewById(R.id.order_phone);
-
+        showDetails = itemView.findViewById(R.id.showDetails);
+        showDetails.setRotation(showDetails.getRotation()-90);
 
 
         itemView.setOnClickListener(this);
+        showDetails.setOnClickListener(this);
         itemView.setOnCreateContextMenuListener(this);
     }
 
@@ -45,6 +48,7 @@ View.OnCreateContextMenuListener{
 
     @Override
     public void onClick(View v) {
+
         itemClickListener.onClick(v, getAdapterPosition(), false);
     }
 

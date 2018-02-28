@@ -2,18 +2,16 @@ package com.example.hp.foodiesserverside;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.hp.foodiesserverside.ViewHolder.OrderViewHolder;
-import com.example.hp.foodiesserverside.model.Order;
 import com.example.hp.foodiesserverside.model.Requests;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -30,7 +28,9 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_order);
+
         recyclerView = findViewById(R.id.listOrders);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         databaseReference = FirebaseDatabase.getInstance().getReference("Requests");
@@ -47,12 +47,25 @@ public class OrderActivity extends AppCompatActivity {
                 databaseReference
         ) {
             @Override
-            protected void populateViewHolder(OrderViewHolder viewHolder, Requests model, int position) {
+            protected void populateViewHolder(OrderViewHolder viewHolder, final Requests model, final int position) {
 
                 viewHolder.orderName.setText(model.name);
                 viewHolder.orderPhone.setText(model.phone);
                 viewHolder.orderStatus.setText(convertcodeToStatus(model.status));
                 viewHolder.orderAddress.setText(model.address);
+
+                viewHolder.showDetails.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent intent = new Intent(OrderActivity.this, OrderDetails.class);
+                        intent.putExtra("orderId", firebaseRecyclerAdapter.getRef(position).getKey());
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                        startActivity(intent);
+
+                    }
+                });
+
             }
         };
 

@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.hp.foodiesserverside.R;
-import com.example.hp.foodiesserverside.SelectedFoodActivity;
+import com.example.hp.foodiesserverside.OrderDetails;
 import com.example.hp.foodiesserverside.model.Category;
 import com.squareup.picasso.Picasso;
 
@@ -47,7 +47,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, SelectedFoodActivity.class);
+                Intent intent = new Intent(context, OrderDetails.class);
                 intent.putExtra("foodKey", object.getId());
                 context.startActivity(intent);
             }
