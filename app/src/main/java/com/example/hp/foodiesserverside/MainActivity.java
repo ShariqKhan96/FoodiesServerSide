@@ -1,9 +1,12 @@
 package com.example.hp.foodiesserverside;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +26,21 @@ public class MainActivity extends AppCompatActivity {
         buttonSignin = (FButton) findViewById(R.id.signIn);
         slogan = (TextView) findViewById(R.id.slogon);
         slogan.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/NABILA.TTF"));
+        SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        String phone = sharedPreferences.getString("phone", "");
+        String name = sharedPreferences.getString("name", "");
+        Log.e("Phone", phone);
+        Log.e("Name", name);
+
+
+        if (!(phone.equals("")) && !(name.equals(""))) {
+
+            Intent intent = new Intent(MainActivity.this, Home.class);
+            startActivity(intent);
+
+        } else {
+            Log.e("SharedPrefs", name + " " + phone);
+        }
 
         buttonSignin.setOnClickListener(new View.OnClickListener() {
             @Override

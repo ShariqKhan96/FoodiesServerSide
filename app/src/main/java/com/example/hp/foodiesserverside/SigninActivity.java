@@ -28,6 +28,7 @@ public class SigninActivity extends AppCompatActivity {
     FButton signIn;
     DatabaseReference dbRef;
     AlertDialog alertDialog;
+    String passToVerify;
 
 
     @Override
@@ -56,12 +57,20 @@ public class SigninActivity extends AppCompatActivity {
                                 if (dataSnapshot.child(phoneNumber.getText().toString()).child("Password").getValue().toString().equals(password.getText().toString())) {
                                     SharedPreferences.Editor edit = getSharedPreferences("SharedPreferences", MODE_PRIVATE).edit();
                                     edit.putString("name", dataSnapshot.child(phoneNumber.getText().toString()).child("Name").getValue().toString());
+                                    edit.putString("phone", dataSnapshot.child(phoneNumber.getText().toString()).child("Phone").getValue().toString());
+                                    edit.putString("code", dataSnapshot.child(phoneNumber.getText().toString()).child("security_code").getValue().toString());
+                                    edit.putString("password", dataSnapshot.child(phoneNumber.getText().toString()).child("Password").getValue().toString());
+                                    edit.putString("isStaff", dataSnapshot.child(phoneNumber.getText().toString()).child("isStaff").getValue().toString());
                                     edit.apply();
+
                                     Intent intent = new Intent(SigninActivity.this, Home.class);
+                                    passToVerify = dataSnapshot.child(phoneNumber.getText().toString()).child("Password").getValue().toString();
+                                    intent.putExtra("password",passToVerify);
+                                    intent.putExtra("phone", phoneNumber.getText().toString());
+                                    intent.putExtra("name",dataSnapshot.child(phoneNumber.getText().toString()).child("Name").getValue().toString());
+                                    intent.putExtra("code",dataSnapshot.child(phoneNumber.getText().toString()).child("security_code").getValue().toString());
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
                                     startActivity(intent);
-
-
 
                                 } else {
                                     Toast.makeText(SigninActivity.this, "Invalid Password", Toast.LENGTH_SHORT).show();

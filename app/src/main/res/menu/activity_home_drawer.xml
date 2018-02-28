@@ -18,6 +18,10 @@
             android:icon="@drawable/ic_access_time_black_24dp"
             android:title="Order Details" />
         <item
+            android:id="@+id/nav_password"
+            android:icon="@drawable/ic_security_black_24dp"
+            android:title="Change Password" />
+        <item
             android:id="@+id/nav_signout"
             android:icon="@drawable/ic_exit_to_app_black_24dp"
             android:title="Sign out" />

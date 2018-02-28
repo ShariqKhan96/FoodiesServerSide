@@ -2,14 +2,17 @@ package com.example.hp.foodiesserverside;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.hp.foodiesserverside.Interface.ItemClickListener;
@@ -45,8 +49,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
+import com.transitionseverywhere.TransitionManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import info.hoang8f.widget.FButton;
@@ -71,17 +78,34 @@ public class Home extends AppCompatActivity
     boolean decider = false;
     FirebaseRecyclerAdapter<cat, MenuViewHolder> firebaseRecyclerAdapter;
 
+    //dialog fields
+    MaterialEditText Password, newPassword, confirmPassword;
+    FButton check;
+
+    //Database reference for change password
+    String changePassVerify;
+    DatabaseReference changePassReference;
+    String phoneNumber;
+    String newPass;
+    String confirmNewPass;
+    SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
+         prefs = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
+
 
         toolbar.setTitle("Menu Management");
         setSupportActionBar(toolbar);
         dbRef = FirebaseDatabase.getInstance().getReference("Category");
+        changePassReference = FirebaseDatabase.getInstance().getReference("User").child(prefs.getString("phone", ""));
 
+        changePassVerify = prefs.getString("password","");
+        Log.e("verifyPassword", changePassVerify);
         recView = (RecyclerView) findViewById(R.id.recyclerView);
 
         recView.setLayoutManager(new LinearLayoutManager(this));
@@ -376,6 +400,18 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_orders) {
             startActivity(new Intent(Home.this, OrderActivity.class));
+        } else if (id == R.id.nav_password) {
+            changePasswordDialog();
+
+        } else if (id == R.id.nav_signout) {
+            SharedPreferences preferences = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear();
+            editor.commit();
+
+            Intent intent = new Intent(Home.this, SigninActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
 
 //        if (id == R.id.nav_camera) {
@@ -395,6 +431,86 @@ public class Home extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void changePasswordDialog() {
+
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Change Password");
+
+        final View view = LayoutInflater.from(this).inflate(R.layout.change_password_layout, null);
+        alertDialog.setView(view);
+
+        Password = view.findViewById(R.id.password);
+        newPassword = view.findViewById(R.id.newpassword);
+        confirmPassword = view.findViewById(R.id.confirm_new_password);
+        check = view.findViewById(R.id.check);
+
+        check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pass = Password.getText().toString();
+
+                if (pass.equals(changePassVerify)) {
+
+                    LinearLayout changePassLayout = view.findViewById(R.id.confirm_layout);
+                    TransitionManager.beginDelayedTransition(changePassLayout);
+                    changePassLayout.setVisibility(View.VISIBLE);
+                    check.setVisibility(View.GONE);
+
+                } else {
+                    Password.setError("Wrong password!");
+                }
+
+            }
+        });
+
+
+        alertDialog.setIcon(R.drawable.ic_security_black_24dp);
+
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (!(TextUtils.isEmpty(Password.getText().toString())) && (!(TextUtils.isEmpty(newPassword.getText().toString()))) &&
+                        (!(TextUtils.isEmpty(confirmPassword.getText().toString())))) {
+
+                    newPass = newPassword.getText().toString();
+                    confirmNewPass = confirmPassword.getText().toString();
+
+                    if (newPass.equals(confirmNewPass)) {
+                        Map<String, Object> passwordUpdateMap = new HashMap<>();
+                        passwordUpdateMap.put("isStaff", "true");
+                        passwordUpdateMap.put("Name", prefs.getString("name",""));
+                        passwordUpdateMap.put("Password", newPass);
+                        passwordUpdateMap.put("Phone", prefs.getString("phone",""));
+                        passwordUpdateMap.put("security_code", prefs.getString("code",""));
+
+                        changePassReference.updateChildren(passwordUpdateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(Home.this, "Password Changed Successfully !!", Toast.LENGTH_SHORT).show();
+                                    changePassVerify = newPass;
+                                } else
+                                    Toast.makeText(Home.this, "" + task.getException().toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+
+                }
+                dialog.dismiss();
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 
 }
