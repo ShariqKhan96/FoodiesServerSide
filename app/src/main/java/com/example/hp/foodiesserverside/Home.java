@@ -24,14 +24,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.hp.foodiesserverside.Interface.ItemClickListener;
-import com.example.hp.foodiesserverside.Service.ListenOrder;
+
 import com.example.hp.foodiesserverside.ViewHolder.MenuViewHolder;
 import com.example.hp.foodiesserverside.adapter.CategoryAdapter;
 import com.example.hp.foodiesserverside.model.Category;
+import com.example.hp.foodiesserverside.model.Token;
 import com.example.hp.foodiesserverside.model.cat;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,6 +46,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -89,6 +92,7 @@ public class Home extends AppCompatActivity
     String newPass;
     String confirmNewPass;
     SharedPreferences prefs;
+    public static String PHONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,15 +100,16 @@ public class Home extends AppCompatActivity
         setContentView(R.layout.activity_home);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-         prefs = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
+        prefs = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
 
 
         toolbar.setTitle("Menu Management");
         setSupportActionBar(toolbar);
         dbRef = FirebaseDatabase.getInstance().getReference("Category");
         changePassReference = FirebaseDatabase.getInstance().getReference("User").child(prefs.getString("phone", ""));
+        PHONE = prefs.getString("phone", "");
 
-        changePassVerify = prefs.getString("password","");
+        changePassVerify = prefs.getString("password", "");
         Log.e("verifyPassword", changePassVerify);
         recView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -114,9 +119,9 @@ public class Home extends AppCompatActivity
 
 
         getCategories();
-
-        Intent intent = new Intent(Home.this, ListenOrder.class);
-        startService(intent);
+//
+//        Intent intent = new Intent(Home.this, ListenOrder.class);
+//        startService(intent);
 
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -136,7 +141,11 @@ public class Home extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+
     }
+
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -145,6 +154,8 @@ public class Home extends AppCompatActivity
             deleteItem(firebaseRecyclerAdapter.getRef(item.getOrder()).getKey());
 
             Toast.makeText(this, String.valueOf(item.getItemId()), Toast.LENGTH_SHORT).show();
+        }else {
+            showAlertDialog();
         }
         return true;
     }
@@ -161,17 +172,13 @@ public class Home extends AppCompatActivity
                     if (ds.child("MenuId").getValue().toString().equals(key)) {
                         dbReference.child(ds.getKey()).removeValue();
                     }
-
-
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
 
     }
 
@@ -221,29 +228,7 @@ public class Home extends AppCompatActivity
 
                 cateogryName = edtCategoryName.getText().toString();
                 uploadImage();
-                Category category = new Category();
-                category.setName(cateogryName);
-                category.setImage(categoryImageUri);
 
-                dbRef.push().setValue(category).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            //  Toast.makeText(Home.this, task.toString(), Toast.LENGTH_SHORT).show();
-                            Log.e("Successfull", "Success");
-                            dialog.dismiss();
-                        } else {
-                            Toast.makeText(Home.this, task.toString(), Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                            Log.e("UnSuccessfull", "UnSuccess");
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Exception", e.getMessage());
-                    }
-                });
 
                 dialog.dismiss();
             }
@@ -276,11 +261,35 @@ public class Home extends AppCompatActivity
                     imageFolder.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-
-                            Log.e("ImageUpload", uri.toString());
                             categoryImageUri = uri.toString();
-                            decider = true;
-                            Toast.makeText(Home.this, categoryImageUri, Toast.LENGTH_SHORT).show();
+
+                            Category category = new Category();
+                            category.setName(cateogryName);
+                            category.setImage(categoryImageUri);
+
+                            dbRef.push().setValue(category).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        //  Toast.makeText(Home.this, task.toString(), Toast.LENGTH_SHORT).show();
+                                        Log.e("Successfull", "Success");
+                                        dialog.dismiss();
+                                    } else {
+                                        Toast.makeText(Home.this, task.toString(), Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                        Log.e("UnSuccessfull", "UnSuccess");
+                                    }
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("Exception", e.getMessage());
+                                }
+                            });
+
+
+//                            decider = true;
+//                            Toast.makeText(Home.this, categoryImageUri, Toast.LENGTH_SHORT).show();
 
                         }
 
@@ -314,6 +323,9 @@ public class Home extends AppCompatActivity
             protected void populateViewHolder(MenuViewHolder viewHolder, cat model, int position) {
                 viewHolder.foodName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage()).fit().into(viewHolder.foodImage);
+//
+//                final double viewWidthToBitmapWidthRatio = (double)viewHolder.foodImage.getWidth() / (double)bitmap.getWidth();
+//                viewHolder.foodImage.getLayoutParams().height = (int) (bitmap.getHeight() * viewWidthToBitmapWidthRatio);
                 final cat local = model;
 
 
@@ -412,6 +424,10 @@ public class Home extends AppCompatActivity
             Intent intent = new Intent(Home.this, SigninActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+        } else if (id == R.id.nav_banner_management) {
+            Intent intent = new Intent(Home.this, BannerMng.class);
+            startActivity(intent);
+
         }
 
 //        if (id == R.id.nav_camera) {
@@ -440,6 +456,7 @@ public class Home extends AppCompatActivity
 
         final View view = LayoutInflater.from(this).inflate(R.layout.change_password_layout, null);
         alertDialog.setView(view);
+        final ViewGroup changePassLayout = view.findViewById(R.id.confirm_layout);
 
         Password = view.findViewById(R.id.password);
         newPassword = view.findViewById(R.id.newpassword);
@@ -453,14 +470,14 @@ public class Home extends AppCompatActivity
 
                 if (pass.equals(changePassVerify)) {
 
-                    LinearLayout changePassLayout = view.findViewById(R.id.confirm_layout);
-                    TransitionManager.beginDelayedTransition(changePassLayout);
-                    changePassLayout.setVisibility(View.VISIBLE);
-                    check.setVisibility(View.GONE);
 
+                    TransitionManager.beginDelayedTransition(changePassLayout);
+                    check.setVisibility(View.GONE);
+                    changePassLayout.setVisibility(View.VISIBLE);
                 } else {
                     Password.setError("Wrong password!");
                 }
+
 
             }
         });
@@ -480,10 +497,10 @@ public class Home extends AppCompatActivity
                     if (newPass.equals(confirmNewPass)) {
                         Map<String, Object> passwordUpdateMap = new HashMap<>();
                         passwordUpdateMap.put("isStaff", "true");
-                        passwordUpdateMap.put("Name", prefs.getString("name",""));
+                        passwordUpdateMap.put("Name", prefs.getString("name", ""));
                         passwordUpdateMap.put("Password", newPass);
-                        passwordUpdateMap.put("Phone", prefs.getString("phone",""));
-                        passwordUpdateMap.put("security_code", prefs.getString("code",""));
+                        passwordUpdateMap.put("Phone", prefs.getString("phone", ""));
+                        passwordUpdateMap.put("security_code", prefs.getString("code", ""));
 
                         changePassReference.updateChildren(passwordUpdateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -492,6 +509,10 @@ public class Home extends AppCompatActivity
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Home.this, "Password Changed Successfully !!", Toast.LENGTH_SHORT).show();
                                     changePassVerify = newPass;
+                                    SharedPreferences.Editor prefs = getSharedPreferences("SharedPreferences", MODE_PRIVATE).edit();
+                                    prefs.putString("password", newPass);
+                                    prefs.apply();
+
                                 } else
                                     Toast.makeText(Home.this, "" + task.getException().toString(), Toast.LENGTH_SHORT).show();
                             }
@@ -513,4 +534,20 @@ public class Home extends AppCompatActivity
         alertDialog.show();
     }
 
+    private void updateToken(String token) {
+        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token toki = new Token(token, true);
+
+        tokenRef.child(Home.PHONE).setValue(toki).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+//                    Log.e("TokenUpdated", task.getResult().toString());
+
+                }
+                //                  Log.e(TAG, "onComplete: "+" Something went wrong" );
+            }
+        });
+    }
 }
+

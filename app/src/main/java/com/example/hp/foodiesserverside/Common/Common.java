@@ -1,5 +1,8 @@
 package com.example.hp.foodiesserverside.Common;
 
+import com.example.hp.foodiesserverside.Remote.APIService;
+import com.example.hp.foodiesserverside.Remote.RetrofitClient;
+
 /**
  * Created by hp on 2/24/2018.
  */
@@ -14,4 +17,10 @@ public class Common {
             return "Shipped";
 
     }
+    public static String FCM_BASE_URL = "https://fcm.googleapis.com/";
+
+    public static APIService getFCMClient() {
+        return RetrofitClient.getClinet(FCM_BASE_URL).create(APIService.class);
+    }
+
 }

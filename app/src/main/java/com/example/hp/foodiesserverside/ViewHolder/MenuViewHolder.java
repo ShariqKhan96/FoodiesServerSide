@@ -48,5 +48,6 @@ public class MenuViewHolder extends RecyclerView.ViewHolder implements
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle("Perform");
         menu.add(0,0,getAdapterPosition(), "Delete");
+//        menu.add(0,1,getAdapterPosition(), "Add Category");
     }
 }

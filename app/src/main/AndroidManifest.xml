@@ -9,16 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" >
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SigninActivity" >
-
-        </activity>
+        <activity android:name=".SigninActivity"></activity>
         <activity
             android:name=".Home"
             android:label="@string/title_activity_home"
@@ -29,10 +27,31 @@
         <activity android:name=".Foods" />
         <activity android:name=".OrderActivity" />
 
-        <service
-            android:name=".Service.ListenOrder"
-            android:enabled="true"
-            android:exported="true"></service>
+        <!--<service-->
+            <!--android:name=".Service.ListenOrder"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="true" />-->
+
+        <activity android:name=".BannerMng">
+
+        </activity>
+
+        <service android:name=".Service.MyFirebaseIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT">
+
+                </action>
+            </intent-filter>
+
+        </service>
+        <service android:name=".Service.MyFirebaseMessaging">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT">
+
+                </action>
+            </intent-filter>
+
+        </service>
     </application>
 
 </manifest>
