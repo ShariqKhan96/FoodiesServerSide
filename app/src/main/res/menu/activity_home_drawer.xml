@@ -12,6 +12,10 @@
             android:id="@+id/nav_banner_management"
             android:icon="@drawable/ic_tv_black_24dp"
             android:title="Banner items" />
+        <item
+            android:id="@+id/nav_message"
+            android:icon="@drawable/ic_message_black_24dp"
+            android:title="Send Message" />
 
 
         <item

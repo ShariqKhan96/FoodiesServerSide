@@ -18,6 +18,7 @@ import com.example.hp.foodiesserverside.Remote.APIService;
 import com.example.hp.foodiesserverside.ViewHolder.OrderViewHolder;
 import com.example.hp.foodiesserverside.model.MyResponse;
 import com.example.hp.foodiesserverside.model.Notification;
+import com.example.hp.foodiesserverside.model.Request;
 import com.example.hp.foodiesserverside.model.Requests;
 import com.example.hp.foodiesserverside.model.Sender;
 import com.example.hp.foodiesserverside.model.Token;
@@ -35,7 +36,7 @@ import retrofit2.Callback;
 public class OrderActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    FirebaseRecyclerAdapter<Requests, OrderViewHolder> firebaseRecyclerAdapter;
+    FirebaseRecyclerAdapter<Request, OrderViewHolder> firebaseRecyclerAdapter;
     DatabaseReference databaseReference;
     MaterialSpinner spinner;
     APIService mService;
@@ -57,14 +58,14 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void loadOrders() {
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Requests, OrderViewHolder>(
-                Requests.class,
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(
+                Request.class,
                 R.layout.order_item,
                 OrderViewHolder.class,
                 databaseReference
         ) {
             @Override
-            protected void populateViewHolder(OrderViewHolder viewHolder, final Requests model, final int position) {
+            protected void populateViewHolder(OrderViewHolder viewHolder, final Request model, final int position) {
 
                 viewHolder.orderName.setText(model.name);
                 viewHolder.orderPhone.setText(model.phone);
@@ -80,6 +81,19 @@ public class OrderActivity extends AppCompatActivity {
 
                         startActivity(intent);
                         overridePendingTransition(R.anim.enter, R.anim.exit);
+                    }
+                });
+                viewHolder.directions.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+
+                        Intent intent = new Intent(OrderActivity.this, TrackingOrder.class);
+                        Common.currentRequest = model;
+
+                        startActivity(intent);
+
                     }
                 });
 
@@ -119,7 +133,7 @@ public class OrderActivity extends AppCompatActivity {
         databaseReference.child(key).removeValue();
     }
 
-    private void showUpdateDialog(String key, final Requests item) {
+    private void showUpdateDialog(String key, final Request item) {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Update Order");
@@ -157,7 +171,7 @@ public class OrderActivity extends AppCompatActivity {
 
     }
 
-    private void notifyOrderStatusToUser(final String localKey, final Requests item) {
+    private void notifyOrderStatusToUser(final String localKey, final Request item) {
         Log.e("localKey", localKey);
         DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference("Tokens");
         tokenRef.orderByKey().equalTo(item.phone).addValueEventListener(new ValueEventListener() {

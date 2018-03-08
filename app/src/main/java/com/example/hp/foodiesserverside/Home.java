@@ -5,11 +5,16 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -28,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.hp.foodiesserverside.Common.Common;
 import com.example.hp.foodiesserverside.Interface.ItemClickListener;
 
 import com.example.hp.foodiesserverside.ViewHolder.MenuViewHolder;
@@ -36,6 +42,11 @@ import com.example.hp.foodiesserverside.model.Category;
 import com.example.hp.foodiesserverside.model.Token;
 import com.example.hp.foodiesserverside.model.cat;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,7 +73,8 @@ import java.util.UUID;
 import info.hoang8f.widget.FButton;
 
 public class Home extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LocationListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     DatabaseReference dbRef;
     RecyclerView recView;
@@ -80,6 +92,14 @@ public class Home extends AppCompatActivity
     private String categoryImageUri;
     boolean decider = false;
     FirebaseRecyclerAdapter<cat, MenuViewHolder> firebaseRecyclerAdapter;
+
+
+    //location
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+    private double currentLatitude;
+    private double currentLongitude;
 
     //dialog fields
     MaterialEditText Password, newPassword, confirmPassword;
@@ -102,12 +122,29 @@ public class Home extends AppCompatActivity
 
         prefs = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                // The next two lines tell the new client that “this” current class will handle connection stuff
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                //fourth line adds the LocationServices API endpoint from GooglePlayServices
+                .addApi(LocationServices.API)
+                .build();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); //
+
 
         toolbar.setTitle("Menu Management");
         setSupportActionBar(toolbar);
         dbRef = FirebaseDatabase.getInstance().getReference("Category");
         changePassReference = FirebaseDatabase.getInstance().getReference("User").child(prefs.getString("phone", ""));
         PHONE = prefs.getString("phone", "");
+
+        //init google api client and location
+
+
+
 
         changePassVerify = prefs.getString("password", "");
         Log.e("verifyPassword", changePassVerify);
@@ -154,7 +191,7 @@ public class Home extends AppCompatActivity
             deleteItem(firebaseRecyclerAdapter.getRef(item.getOrder()).getKey());
 
             Toast.makeText(this, String.valueOf(item.getItemId()), Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
             showAlertDialog();
         }
         return true;
@@ -412,6 +449,9 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_orders) {
             startActivity(new Intent(Home.this, OrderActivity.class));
+        } else if (id == R.id.nav_message) {
+            Intent intent = new Intent(Home.this, SendMessage.class);
+            startActivity(intent);
         } else if (id == R.id.nav_password) {
             changePasswordDialog();
 
@@ -549,5 +589,96 @@ public class Home extends AppCompatActivity
             }
         });
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == 101) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//                    if (location == null) {
+//                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+//
+//                    } else {
+//                        //If everything went fine lets get latitude and longitude
+//                        currentLatitude = location.getLatitude();
+//                        currentLongitude = location.getLongitude();
+//
+//                        Toast.makeText(this, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
+//                    }
+
+                }
+
+            } else {
+                Log.e("NotGranted", "Permission not Granted");
+            }
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(Home.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+            return;
+        }
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        if (location == null) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        } else {
+            //If everything went fine lets get latitude and longitude
+            currentLatitude = location.getLatitude();
+            currentLongitude = location.getLongitude();
+            Common.currentLat = location.getLatitude();
+            Common.currentLng = location.getLongitude();
+
+            Log.e("current LatLng", currentLatitude + " " + currentLongitude);
+            //  Toast.makeText(this, currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                    /*
+                     * Thrown if Google Play services canceled the original
+                     * PendingIntent
+                     */
+            } catch (IntentSender.SendIntentException e) {
+                // Log the error
+               Log.e("onConnectedFailed", e.getMessage());
+
+            }
+        } else {
+                /*
+                 * If no resolution is available, display a dialog to the
+                 * user with the error.
+                 */
+            Log.e("Error", "Location services connection failed with code " + connectionResult.getErrorCode());
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLatitude = location.getLatitude();
+        currentLongitude = location.getLongitude();
+
+        Common.currentLat = location.getLatitude();
+        Common.currentLng = location.getLongitude();
+    }
+
+
 }
 

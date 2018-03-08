@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.example.hp.foodiesserverside.Interface.ItemClickListener;
 import com.example.hp.foodiesserverside.R;
 
+import info.hoang8f.widget.FButton;
+
 /**
  * Created by hp on 2/23/2018.
  */
@@ -22,6 +24,7 @@ View.OnCreateContextMenuListener{
     public TextView orderPhone;
     public TextView orderAddress;
     public ImageView showDetails;
+    public FButton directions;
     private ItemClickListener itemClickListener;
 
     private View view;
@@ -33,10 +36,12 @@ View.OnCreateContextMenuListener{
         orderAddress= itemView.findViewById(R.id.order_address);
         orderPhone= itemView.findViewById(R.id.order_phone);
         showDetails = itemView.findViewById(R.id.showDetails);
+        directions= itemView.findViewById(R.id.directions);
         showDetails.setRotation(showDetails.getRotation()-90);
 
 
         itemView.setOnClickListener(this);
+        directions.setOnClickListener(this);
         showDetails.setOnClickListener(this);
         itemView.setOnCreateContextMenuListener(this);
     }

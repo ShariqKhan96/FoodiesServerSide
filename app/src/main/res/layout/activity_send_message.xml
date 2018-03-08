@@ -5,23 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:background="@drawable/background"
     >
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/background"
-        android:scaleType="centerCrop"
-        android:layout_centerInParent="true"
-        />
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:alpha="0.7"
-        android:scaleType="centerCrop"
-        android:layout_centerInParent="true"
         android:background="@android:color/black" />
 
 
@@ -35,31 +25,28 @@
         android:orientation="vertical">
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/phoneNumber"
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="phone number"
-            android:inputType="phone"
-            android:textSize="34sp"
+            android:hint="Title"
+            android:textSize="30sp"
             app:met_baseColor="@android:color/white"
             app:met_floatingLabel="highlight"
-            app:met_maxCharacters="11"
             app:met_primaryColor="@android:color/white"
             app:met_singleLineEllipsis="true"
 
             />
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/password"
+            android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="password"
-            android:inputType="textPassword"
+            android:hint="Message"
             android:textColorHint="@android:color/white"
-            android:textSize="34sp"
+            android:textSize="24sp"
             app:met_baseColor="@android:color/white"
             app:met_floatingLabel="highlight"
-            app:met_maxCharacters="11"
+
             app:met_primaryColor="@android:color/white"
             app:met_singleLineEllipsis="true"
 
@@ -70,19 +57,20 @@
 
 
     <info.hoang8f.widget.FButton
-    android:id="@+id/signIn"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginLeft="8dp"
-    android:layout_alignParentBottom="true"
-    android:text="Proceed"
-    android:textColor="@android:color/white"
-    fbutton:cornerRadius="4dp"
-    fbutton:fButtonColor="@color/colorPrimaryDark"
-    fbutton:shadowColor="@android:color/white"
-    fbutton:shadowEnabled="true"
-    fbutton:shadowHeight="3dp" />
+        android:id="@+id/send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_alignParentBottom="true"
+        android:text="Send"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        fbutton:cornerRadius="4dp"
+        fbutton:fButtonColor="@color/signUp"
+        fbutton:shadowColor="@android:color/black"
+        fbutton:shadowEnabled="true"
+        fbutton:shadowHeight="5dp" />
 
 </RelativeLayout>

@@ -3,14 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="5dp">
 
+
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginBottom="18dp"
         android:layout_marginTop="18dp"
@@ -18,9 +20,10 @@
 
 
         <LinearLayout
+            android:id="@+id/toRelate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="30dp"
             android:layout_marginStart="5dp"
             android:layout_weight="9"
             android:orientation="vertical">
@@ -60,18 +63,36 @@
                 android:gravity="center_vertical|start"
                 android:text="Address"
                 android:textSize="18sp"
+                android:layout_marginBottom="10dp"
                 android:textStyle="italic" />
 
         </LinearLayout>
 
+
     </LinearLayout>
+    <info.hoang8f.widget.FButton
+        android:id="@+id/directions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_gravity="bottom"
+        android:text="Directions"
+        android:textColor="@android:color/black"
+        fbutton:cornerRadius="4dp"
+        fbutton:fButtonColor="@android:color/white"
+        fbutton:shadowColor="@android:color/black"
+        fbutton:shadowEnabled="true"
+        fbutton:shadowHeight="2dp" />
+
 
     <ImageView
         android:id="@+id/showDetails"
         android:layout_width="wrap_content"
-        android:src="@drawable/ic_action_name"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
+        android:src="@drawable/ic_action_name"
 
 
         />
