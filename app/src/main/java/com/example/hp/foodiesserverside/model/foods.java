@@ -12,10 +12,22 @@ public class foods {
     public String Price;
     public String Discount;
     public String MenuId;
+    public String food_id;
 
     public foods() {
     }
-//
+
+    public foods(String name, String image, String description, String price, String discount, String menuId, String food_id) {
+        Name = name;
+        Image = image;
+        Description = description;
+        Price = price;
+        Discount = discount;
+        MenuId = menuId;
+        this.food_id = food_id;
+    }
+
+    //
 //    public String getMenuId() {
 //        return MenuId;
 //    }

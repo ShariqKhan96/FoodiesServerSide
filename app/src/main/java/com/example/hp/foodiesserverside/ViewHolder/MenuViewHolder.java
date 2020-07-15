@@ -34,7 +34,9 @@ public class MenuViewHolder extends RecyclerView.ViewHolder implements
     }
 
     public void onItemClickListener(ItemClickListener itemClickListener) {
+
         this.itemClickListener = itemClickListener;
+
     }
 
 

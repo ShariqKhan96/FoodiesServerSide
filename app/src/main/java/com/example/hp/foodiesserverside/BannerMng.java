@@ -108,8 +108,11 @@ public class BannerMng extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent();
+
                 intent.setType("image/*");
+
                 intent.setAction(Intent.ACTION_GET_CONTENT);
+
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
 
             }
@@ -121,6 +124,7 @@ public class BannerMng extends AppCompatActivity {
             public void onClick(final DialogInterface dialog, int which) {
 
                 foodName = edtFoodName.getText().toString();
+
                 uploadImage();
 //                foods food = new foods();
 //                food.Name = foodName;
@@ -182,6 +186,7 @@ public class BannerMng extends AppCompatActivity {
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 dialog.dismiss();
             }
         });
@@ -194,14 +199,18 @@ public class BannerMng extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_banner_mng);
+
         BannerDataBase = FirebaseDatabase.getInstance().getReference("Banner");
 
         storageReference = FirebaseStorage.getInstance().getReference();
 
 
         bannerList = findViewById(R.id.bannerlist);
+
         bannerList.setLayoutManager(new LinearLayoutManager(this));
+
         adapter = new BannerAdapter(arrayList, this);
+
         bannerList.setAdapter(adapter);
 
         FloatingActionButton floatingActionButton = findViewById(R.id.fab);
@@ -211,6 +220,7 @@ public class BannerMng extends AppCompatActivity {
                 addDialog();
             }
         });
+
 //
 //        BannerDataBase.addValueEventListener(new ValueEventListener() {
 //            @Override

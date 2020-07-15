@@ -7,9 +7,11 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.hp.foodiesserverside.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,38 +48,45 @@ public class SigninActivity extends AppCompatActivity {
             public void onClick(View view) {
                 alertDialog.show();
                 if (!TextUtils.isEmpty(phoneNumber.getText().toString()) && !TextUtils.isEmpty(password.getText().toString())) {
-                    dbRef = FirebaseDatabase.getInstance().getReference("User");
+                    dbRef = FirebaseDatabase.getInstance().getReference("User").child(phoneNumber.getText().toString());
                     dbRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             //  Toast.makeText(SigninActivity.this, dataSnapshot.child("Phone").getValue().toString(), Toast.LENGTH_SHORT).show();
 
-                            if (dataSnapshot.child(phoneNumber.getText().toString()).exists() &&
-                                    dataSnapshot.child(phoneNumber.getText().toString()).child("isStaff").getValue().toString().equals("true")) {
-                                if (dataSnapshot.child(phoneNumber.getText().toString()).child("Password").getValue().toString().equals(password.getText().toString())) {
+                            Log.e("key", dataSnapshot.getKey());
+
+                            User user = dataSnapshot.getValue(User.class);
+
+                            if (user != null) {
+                                if (user.isStaff.equals("true") && user.Password.equals(password.getText().toString())) {
                                     SharedPreferences.Editor edit = getSharedPreferences("SharedPreferences", MODE_PRIVATE).edit();
-                                    edit.putString("name", dataSnapshot.child(phoneNumber.getText().toString()).child("Name").getValue().toString());
-                                    edit.putString("phone", dataSnapshot.child(phoneNumber.getText().toString()).child("Phone").getValue().toString());
-                                    edit.putString("code", dataSnapshot.child(phoneNumber.getText().toString()).child("security_code").getValue().toString());
-                                    edit.putString("password", dataSnapshot.child(phoneNumber.getText().toString()).child("Password").getValue().toString());
-                                    edit.putString("isStaff", dataSnapshot.child(phoneNumber.getText().toString()).child("isStaff").getValue().toString());
+                                    edit.putString("name", user.name);
+                                    edit.putString("phone", phoneNumber.getText().toString());
+                                    edit.putString("code", user.secureCode);
+                                    //edit.putString("password", dataSnapshot.child(phoneNumber.getText().toString()).child("Password").getValue().toString());
+                                    edit.putString("isStaff", user.isStaff);
                                     edit.apply();
 
                                     Intent intent = new Intent(SigninActivity.this, Home.class);
-                                    passToVerify = dataSnapshot.child(phoneNumber.getText().toString()).child("Password").getValue().toString();
-                                    intent.putExtra("password",passToVerify);
+                                    passToVerify = user.Password;
+                                    intent.putExtra("password", passToVerify);
                                     intent.putExtra("phone", phoneNumber.getText().toString());
-                                    intent.putExtra("name",dataSnapshot.child(phoneNumber.getText().toString()).child("Name").getValue().toString());
-                                    intent.putExtra("code",dataSnapshot.child(phoneNumber.getText().toString()).child("security_code").getValue().toString());
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
+                                    intent.putExtra("name", user.name);
+                                    intent.putExtra("code", user.secureCode);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
 
                                 } else {
-                                    Toast.makeText(SigninActivity.this, "Invalid Password", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SigninActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                Toast.makeText(SigninActivity.this, "Invalid Phone number Or not Admin!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SigninActivity.this, "No user found!", Toast.LENGTH_SHORT).show();
                             }
+
+//                            else {
+//                                Toast.makeText(SigninActivity.this, "Invalid Phone number Or not Admin!", Toast.LENGTH_SHORT).show();
+//                            }
                             alertDialog.dismiss();
                         }
 

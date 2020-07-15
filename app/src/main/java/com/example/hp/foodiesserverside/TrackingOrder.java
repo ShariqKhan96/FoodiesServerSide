@@ -14,11 +14,13 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.hp.foodiesserverside.Common.Common;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -43,7 +45,6 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracking_order);
-
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -72,16 +73,23 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
         destinationLat = Double.valueOf(toSplit[0]);
         destinationLng = Double.valueOf(toSplit[1]);
         endPoint = new LatLng(destinationLat, destinationLng);
-        startPoint = new LatLng(24.9273525, 67.0749811);
+        startPoint = new LatLng(Common.currentLat, Common.currentLng);
 
         Log.e("start", startPoint.toString());
         Log.e("end", endPoint.toString());
 
         mMap.addMarker(new MarkerOptions().position(startPoint).title("Source"));
         mMap.addMarker(new MarkerOptions().position(endPoint).title("Destination"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startPoint, 12));
+        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startPoint, 15));
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(startPoint);
+        builder.include(endPoint);
+        LatLngBounds bounds = builder.build();
 
-        drawPath();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+        mMap.animateCamera(cu);
+
+        //drawPath();
 
 
     }
@@ -162,7 +170,7 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
         }
         // progressDialog.dismiss();
 
-    progressDialog.dismiss();
+        progressDialog.dismiss();
     }
 
     @Override

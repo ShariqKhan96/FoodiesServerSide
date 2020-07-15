@@ -16,7 +16,7 @@ import info.hoang8f.widget.FButton;
  */
 
 public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-View.OnCreateContextMenuListener{
+        View.OnCreateContextMenuListener {
 
 
     public TextView orderName;
@@ -25,6 +25,7 @@ View.OnCreateContextMenuListener{
     public TextView orderAddress;
     public ImageView showDetails;
     public FButton directions;
+    public FButton shipper;
     private ItemClickListener itemClickListener;
 
     private View view;
@@ -32,16 +33,17 @@ View.OnCreateContextMenuListener{
     public OrderViewHolder(View itemView) {
         super(itemView);
         orderName = itemView.findViewById(R.id.order_name);
-        orderStatus= itemView.findViewById(R.id.order_status);
-        orderAddress= itemView.findViewById(R.id.order_address);
-        orderPhone= itemView.findViewById(R.id.order_phone);
+        orderStatus = itemView.findViewById(R.id.order_status);
+        orderAddress = itemView.findViewById(R.id.order_address);
+        orderPhone = itemView.findViewById(R.id.order_phone);
         showDetails = itemView.findViewById(R.id.showDetails);
-        directions= itemView.findViewById(R.id.directions);
-        showDetails.setRotation(showDetails.getRotation()-90);
+        directions = itemView.findViewById(R.id.directions);
+        shipper = itemView.findViewById(R.id.shipper);
+        showDetails.setRotation(showDetails.getRotation() - 90);
 
 
-        itemView.setOnClickListener(this);
         directions.setOnClickListener(this);
+        shipper.setOnClickListener(this);
         showDetails.setOnClickListener(this);
         itemView.setOnCreateContextMenuListener(this);
     }
@@ -61,7 +63,7 @@ View.OnCreateContextMenuListener{
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.setHeaderTitle("Perform");
 
-        menu.add(0,0,getAdapterPosition(), "Update");
-        menu.add(0,1,getAdapterPosition(), "Delete");
+        menu.add(0, 0, getAdapterPosition(), "Update");
+        menu.add(0, 1, getAdapterPosition(), "Delete");
     }
 }

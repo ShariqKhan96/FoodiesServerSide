@@ -93,7 +93,7 @@ public class Foods extends AppCompatActivity {
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Please fill the information completely");
-        builder.setTitle("Add new Category");
+        builder.setTitle("Add new Food");
 
         storageReference = FirebaseStorage.getInstance().getReference();
 
@@ -228,10 +228,12 @@ public class Foods extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
 
                             Log.e("ImageUpload", uri.toString());
+
                             categoryImageUri = uri.toString();
 
                             foods food = new foods();
                             food.Name = foodName;
+
                             food.Image = categoryImageUri;
                             food.MenuId = key;
                             food.Description = edtFoodDescription.getText().toString();
@@ -239,12 +241,15 @@ public class Foods extends AppCompatActivity {
 
                             DatabaseReference forPushId = FirebaseDatabase.getInstance().getReference("Foods").push();
                             String push_key = forPushId.getKey();
+                            food.food_id = push_key;
                             DatabaseReference insert = FirebaseDatabase.getInstance().getReference("Foods");
 
                             Map map = new HashMap();
                             map.put("Name", foodName);
                             Log.e("sending", categoryImageUri);
                             map.put("Image", categoryImageUri);
+                            map.put("food_id", push_key);
+                            map.put("Price", edtFoodPrice.getText().toString());
                             map.put("MenuId", key);
                             map.put("Discount", edtFoodDiscount.getText().toString());
                             map.put("Description", edtFoodDescription.getText().toString());
@@ -285,7 +290,7 @@ public class Foods extends AppCompatActivity {
             protected void populateViewHolder(FoodViewHolder viewHolder, foods model, int position) {
 
                 viewHolder.foodName.setText(model.Name);
-                Picasso.with(Foods.this).load(model.Image).into(viewHolder.foodImage);
+                Picasso.with(Foods.this).load(model.Image).placeholder(R.drawable.my_bg).into(viewHolder.foodImage);
 
                 final foods Model = model;
 

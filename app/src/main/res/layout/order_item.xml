@@ -1,90 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="5dp">
 
-
     <LinearLayout
-        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginBottom="18dp"
-        android:layout_marginTop="18dp"
-        android:orientation="horizontal">
-
+        android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/toRelate"
-            android:layout_width="0dp"
+            android:id="@+id/container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:layout_marginStart="5dp"
-            android:layout_weight="9"
-            android:orientation="vertical">
+            android:layout_marginTop="18dp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/order_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|start"
-                android:text="Name"
-                android:textColor="#111111"
-                android:textSize="18sp"
-                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/order_status"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/toRelate"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical|start"
-                android:text="Status"
-                android:textSize="18sp"
-                android:textStyle="italic" />
+                android:layout_marginStart="5dp"
 
-            <TextView
-                android:id="@+id/order_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|start"
-                android:text="12345"
-                android:textSize="18sp"
-                android:textStyle="italic" />
+                android:layout_weight="9"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/order_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|start"
-                android:text="Address"
-                android:textSize="18sp"
-                android:layout_marginBottom="10dp"
-                android:textStyle="italic" />
+                <TextView
+                    android:id="@+id/order_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|start"
+                    android:text="Name"
+                    android:textColor="#111111"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/order_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|start"
+                    android:text="Status"
+                    android:textSize="18sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/order_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|start"
+                    android:text="12345"
+                    android:textSize="18sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/order_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical|start"
+                    android:text="Address"
+                    android:textSize="18sp"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <info.hoang8f.widget.FButton
+                android:id="@+id/directions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:text="Directions"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                fbutton:cornerRadius="4dp"
+                fbutton:fButtonColor="@android:color/white"
+                fbutton:shadowColor="@android:color/black"
+                fbutton:shadowEnabled="true"
+                fbutton:shadowHeight="2dp" />
+
+            <info.hoang8f.widget.FButton
+                android:id="@+id/shipper"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:text="Assign Shipper"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                fbutton:cornerRadius="4dp"
+                fbutton:fButtonColor="@android:color/white"
+                fbutton:shadowColor="@android:color/black"
+                fbutton:shadowEnabled="true"
+                fbutton:shadowHeight="2dp" />
+        </LinearLayout>
 
     </LinearLayout>
-    <info.hoang8f.widget.FButton
-        android:id="@+id/directions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_gravity="bottom"
-        android:text="Directions"
-        android:textColor="@android:color/black"
-        fbutton:cornerRadius="4dp"
-        fbutton:fButtonColor="@android:color/white"
-        fbutton:shadowColor="@android:color/black"
-        fbutton:shadowEnabled="true"
-        fbutton:shadowHeight="2dp" />
 
 
     <ImageView

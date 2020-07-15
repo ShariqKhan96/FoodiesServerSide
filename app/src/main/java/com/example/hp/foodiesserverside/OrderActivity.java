@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.hp.foodiesserverside.Common.Common;
+import com.example.hp.foodiesserverside.Interface.ItemClickListener;
 import com.example.hp.foodiesserverside.Remote.APIService;
 import com.example.hp.foodiesserverside.ViewHolder.OrderViewHolder;
 import com.example.hp.foodiesserverside.model.MyResponse;
@@ -72,6 +73,13 @@ public class OrderActivity extends AppCompatActivity {
                 viewHolder.orderStatus.setText(convertcodeToStatus(model.status));
                 viewHolder.orderAddress.setText(model.address);
 
+                viewHolder.onItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
+
+                    }
+                });
+
                 viewHolder.showDetails.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -88,11 +96,22 @@ public class OrderActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
 
-
                         Intent intent = new Intent(OrderActivity.this, TrackingOrder.class);
                         Common.currentRequest = model;
 
                         startActivity(intent);
+
+                    }
+                });
+                viewHolder.shipper.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+//                        Intent intent = new Intent(OrderActivity.this, TrackingOrder.class);
+//                        Common.currentRequest = model;
+//
+//                        startActivity(intent);
 
                     }
                 });

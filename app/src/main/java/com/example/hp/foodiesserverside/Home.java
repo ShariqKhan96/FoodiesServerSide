@@ -91,7 +91,7 @@ public class Home extends AppCompatActivity
     private Uri imageUri;
     private String categoryImageUri;
     boolean decider = false;
-    FirebaseRecyclerAdapter<cat, MenuViewHolder> firebaseRecyclerAdapter;
+    FirebaseRecyclerAdapter<Category, MenuViewHolder> firebaseRecyclerAdapter;
 
 
     //location
@@ -142,8 +142,6 @@ public class Home extends AppCompatActivity
         PHONE = prefs.getString("phone", "");
 
         //init google api client and location
-
-
 
 
         changePassVerify = prefs.getString("password", "");
@@ -300,11 +298,14 @@ public class Home extends AppCompatActivity
                         public void onSuccess(Uri uri) {
                             categoryImageUri = uri.toString();
 
+                            String id = dbRef.push().getKey();
                             Category category = new Category();
                             category.setName(cateogryName);
                             category.setImage(categoryImageUri);
+                            category.setId(id);
 
-                            dbRef.push().setValue(category).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                            dbRef.child(id).setValue(category).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
@@ -350,20 +351,21 @@ public class Home extends AppCompatActivity
 
     private void getCategories() {
 
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<cat, MenuViewHolder>(
-                cat.class,
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(
+                Category.class,
                 R.layout.item_view,
                 MenuViewHolder.class,
                 dbRef
         ) {
             @Override
-            protected void populateViewHolder(MenuViewHolder viewHolder, cat model, int position) {
+            protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
                 viewHolder.foodName.setText(model.getName());
-                Picasso.with(Home.this).load(model.getImage()).fit().into(viewHolder.foodImage);
+                Picasso.with(Home.this).load(model.getImage()).placeholder(R.drawable.my_bg).into(viewHolder.foodImage);
+
 //
 //                final double viewWidthToBitmapWidthRatio = (double)viewHolder.foodImage.getWidth() / (double)bitmap.getWidth();
 //                viewHolder.foodImage.getLayoutParams().height = (int) (bitmap.getHeight() * viewWidthToBitmapWidthRatio);
-                final cat local = model;
+                final Category local = model;
 
 
                 viewHolder.onItemClickListener(new ItemClickListener() {
@@ -652,20 +654,20 @@ public class Home extends AppCompatActivity
             try {
                 // Start an Activity that tries to resolve the error
                 connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-                    /*
-                     * Thrown if Google Play services canceled the original
-                     * PendingIntent
-                     */
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
             } catch (IntentSender.SendIntentException e) {
                 // Log the error
-               Log.e("onConnectedFailed", e.getMessage());
+                Log.e("onConnectedFailed", e.getMessage());
 
             }
         } else {
-                /*
-                 * If no resolution is available, display a dialog to the
-                 * user with the error.
-                 */
+            /*
+             * If no resolution is available, display a dialog to the
+             * user with the error.
+             */
             Log.e("Error", "Location services connection failed with code " + connectionResult.getErrorCode());
         }
     }
@@ -680,5 +682,20 @@ public class Home extends AppCompatActivity
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+    }
 }
 

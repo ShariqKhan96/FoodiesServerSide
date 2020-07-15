@@ -8,6 +8,7 @@ public class cat {
     private String Image;
     private String Name;
 
+
     public cat() {
     }
 

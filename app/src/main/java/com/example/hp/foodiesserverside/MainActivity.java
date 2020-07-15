@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -33,10 +34,11 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Name", name);
 
 
-        if (!(phone.equals("")) && !(name.equals(""))) {
+        if (!TextUtils.isEmpty(name)) {
 
             Intent intent = new Intent(MainActivity.this, Home.class);
             startActivity(intent);
+            finish();
 
         } else {
             Log.e("SharedPrefs", name + " " + phone);
