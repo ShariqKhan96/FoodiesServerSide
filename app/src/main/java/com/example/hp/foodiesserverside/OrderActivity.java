@@ -73,6 +73,16 @@ public class OrderActivity extends AppCompatActivity {
                 viewHolder.orderStatus.setText(convertcodeToStatus(model.status));
                 viewHolder.orderAddress.setText(model.address);
 
+                if (model.assigned_to != null) {
+                    viewHolder.shipper.setVisibility(View.GONE);
+                    viewHolder.oderAssignedTo.setVisibility(View.VISIBLE);
+                    viewHolder.oderAssignedTo.setText("Assigned To :" + model.assigned_to.getName());
+                } else {
+                    viewHolder.shipper.setVisibility(View.VISIBLE);
+                    viewHolder.oderAssignedTo.setVisibility(View.GONE);
+                }
+
+
                 viewHolder.onItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
@@ -108,10 +118,11 @@ public class OrderActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
 
-//                        Intent intent = new Intent(OrderActivity.this, TrackingOrder.class);
-//                        Common.currentRequest = model;
-//
-//                        startActivity(intent);
+                        Intent intent = new Intent(OrderActivity.this, ShipperActivity.class);
+                        Common.currentRequest = model;
+                        Log.e("id", model.orderId + " " + model.latLng);
+                        intent.putExtra("from", "assign");
+                        startActivity(intent);
 
                     }
                 });
@@ -126,7 +137,7 @@ public class OrderActivity extends AppCompatActivity {
     @NonNull
     private String convertcodeToStatus(String status) {
         if (status.equals("0"))
-            return "Order Placed";
+            return "Order Pending";
         else if (status.equals("1"))
             return "On My Way!";
         else

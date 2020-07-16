@@ -62,12 +62,22 @@
                     android:id="@+id/order_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
                     android:gravity="center_vertical|start"
                     android:text="Address"
                     android:textSize="18sp"
                     android:textStyle="italic" />
 
+                <TextView
+
+                    android:id="@+id/order_assigned_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical|start"
+                    android:text="Assigned To"
+                    android:textSize="18sp"
+                    android:textStyle="italic"
+                    android:visibility="gone" />
             </LinearLayout>
 
 
@@ -107,6 +117,7 @@
                 android:text="Assign Shipper"
                 android:textAllCaps="false"
                 android:textColor="@android:color/black"
+                android:visibility="visible"
                 fbutton:cornerRadius="4dp"
                 fbutton:fButtonColor="@android:color/white"
                 fbutton:shadowColor="@android:color/black"

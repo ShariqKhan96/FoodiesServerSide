@@ -461,7 +461,7 @@ public class Home extends AppCompatActivity
             SharedPreferences preferences = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             editor.clear();
-            editor.commit();
+            editor.apply();
 
             Intent intent = new Intent(Home.this, SigninActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -470,6 +470,10 @@ public class Home extends AppCompatActivity
             Intent intent = new Intent(Home.this, BannerMng.class);
             startActivity(intent);
 
+        } else if (R.id.nav_shippers == id) {
+            Intent intent = new Intent(Home.this, ShipperActivity.class);
+            intent.putExtra("from", "not_assign");
+            startActivity(intent);
         }
 
 //        if (id == R.id.nav_camera) {

@@ -14,6 +14,7 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.example.hp.foodiesserverside.Common.Common;
+import com.example.hp.foodiesserverside.model.Location;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +25,11 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,8 +44,10 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
     String[] toSplit;
     LatLng startPoint;
     LatLng endPoint;
+    DatabaseReference shipperRef;
     private List<Polyline> polylines = new ArrayList<>();
     private ProgressDialog progressDialog;
+    ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +82,11 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
         destinationLng = Double.valueOf(toSplit[1]);
         endPoint = new LatLng(destinationLat, destinationLng);
         startPoint = new LatLng(Common.currentLat, Common.currentLng);
-
+        shipperRef = FirebaseDatabase.getInstance().getReference("ShipperLocation").child(Common.currentRequest.assigned_to.phone);
         Log.e("start", startPoint.toString());
         Log.e("end", endPoint.toString());
 
-        mMap.addMarker(new MarkerOptions().position(startPoint).title("Source"));
+        //mMap.addMarker(new MarkerOptions().position(startPoint).title("Source"));
         mMap.addMarker(new MarkerOptions().position(endPoint).title("Destination"));
         //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(startPoint, 15));
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -89,8 +97,26 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 100);
         mMap.animateCamera(cu);
 
+        track();
+
         //drawPath();
 
+
+    }
+
+    private void track() {
+
+        shipperRef.addValueEventListener(valueEventListener);
+
+
+    }
+
+    private void addMarkers(Location latLng) {
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(endPoint).title("Destination"));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Rider"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latLng.latitude, latLng.longitude), 13));
+        Log.e("tracking", "tracking");
 
     }
 
@@ -190,4 +216,32 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
 
         //here asynctask shuru hojaiga package ka then api call hogi internally...
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mMap.clear();
+                Location latLng = dataSnapshot.getValue(com.example.hp.foodiesserverside.model.Location.class);
+                addMarkers(latLng);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        shipperRef = FirebaseDatabase.getInstance().getReference("ShipperLocation").child(Common.currentRequest.assigned_to.phone);
+        if (valueEventListener != null)
+            shipperRef.addValueEventListener(valueEventListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        shipperRef.removeEventListener(valueEventListener);
+    }
 }
+

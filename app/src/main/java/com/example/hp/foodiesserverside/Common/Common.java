@@ -10,7 +10,7 @@ import com.example.hp.foodiesserverside.model.Requests;
  */
 
 public class Common {
-    public static Request currentRequest;
+    public static Request currentRequest = new Request();
     public static double currentLat = 0;
     public static double currentLng= 0;
     public static double destinationLat= 0;

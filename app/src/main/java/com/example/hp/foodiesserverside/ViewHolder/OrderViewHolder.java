@@ -22,6 +22,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
     public TextView orderName;
     public TextView orderStatus;
     public TextView orderPhone;
+    public TextView oderAssignedTo;
     public TextView orderAddress;
     public ImageView showDetails;
     public FButton directions;
@@ -34,6 +35,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
         super(itemView);
         orderName = itemView.findViewById(R.id.order_name);
         orderStatus = itemView.findViewById(R.id.order_status);
+        oderAssignedTo = itemView.findViewById(R.id.order_assigned_to);
         orderAddress = itemView.findViewById(R.id.order_address);
         orderPhone = itemView.findViewById(R.id.order_phone);
         showDetails = itemView.findViewById(R.id.showDetails);
