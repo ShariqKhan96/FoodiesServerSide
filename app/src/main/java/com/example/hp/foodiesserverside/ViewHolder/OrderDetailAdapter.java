@@ -1,6 +1,6 @@
 package com.example.hp.foodiesserverside.ViewHolder;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +45,10 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
         Order order = myOrders.get(position);
-        holder.productQuantity.setText("Quantity : "+order.quantity);
-        holder.productPrice.setText("Price : "+order.price);
-        holder.productDiscount.setText("Discount : " +order.discount);
-        holder.prodouctName.setText("Name : "+order.name);
+        holder.productQuantity.setText("Quantity : " + order.quantity);
+        holder.productPrice.setText("Price : " + order.price + " Rs");
+        holder.productDiscount.setText("Discount : " + order.discount);
+        holder.prodouctName.setText("Name : " + order.name);
 
     }
 

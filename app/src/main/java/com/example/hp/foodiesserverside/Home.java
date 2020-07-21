@@ -11,26 +11,39 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.example.hp.foodiesserverside.Remote.APIService;
+import com.example.hp.foodiesserverside.model.MyResponse;
+import com.example.hp.foodiesserverside.model.Notification;
+import com.example.hp.foodiesserverside.model.Sender;
+import com.example.hp.foodiesserverside.model.User;
+import com.example.hp.foodiesserverside.utils.Utils;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import com.google.android.material.navigation.NavigationView;
+
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.hp.foodiesserverside.Common.Common;
@@ -55,9 +68,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -71,6 +84,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import info.hoang8f.widget.FButton;
+import okhttp3.internal.Util;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LocationListener,
@@ -177,7 +194,13 @@ public class Home extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        updateToken(FirebaseInstanceId.getInstance().getToken());
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                updateToken(instanceIdResult.getToken());
+            }
+        });
+
 
     }
 
@@ -224,6 +247,90 @@ public class Home extends AppCompatActivity
 //            arrayList.remove(itemId);
 //            adapter.notifyDataSetChanged();
         }
+
+    }
+
+
+    private void showMessageDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //builder.setMessage("Please fill the information completely");
+        builder.setTitle("Send Message");
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.send_message_dialog, null);
+
+        builder.setView(view);
+        builder.setIcon(R.drawable.ic_cloud_upload_black_24dp);
+
+        MaterialEditText messageEdt, titleEdt;
+        messageEdt = view.findViewById(R.id.message);
+        titleEdt = view.findViewById(R.id.title);
+
+        builder.setPositiveButton("Send Message", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, int which) {
+
+                if (!Utils.getInstance().anyFieldEmpty(new String[]{messageEdt.getText().toString(), titleEdt.getText().toString()})) {
+
+                    APIService api = Common.getFCMClient();
+                    FirebaseDatabase.getInstance().getReference("User")
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    for (DataSnapshot data : snapshot.getChildren()) {
+                                        User user = data.getValue(User.class);
+                                        if (!user.Phone.equals(prefs.getString("phone", "")) && user.isStaff.equals("false")) {
+
+                                            if (user.token != null) {
+                                                api.sendNotification(new Sender(user.token.token, new Notification(messageEdt.getText().toString(), titleEdt.getText().toString()), null))
+                                                        .enqueue(new Callback<MyResponse>() {
+                                                            @Override
+                                                            public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                                                                Log.e("code", response.code() + "");
+                                                                if (response.isSuccessful()) {
+                                                                    Toast.makeText(Home.this, "Promotion sent successfully!", Toast.LENGTH_SHORT).show();
+
+                                                                } else
+                                                                    Toast.makeText(Home.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                                                            }
+
+                                                            @Override
+                                                            public void onFailure(Call<MyResponse> call, Throwable t) {
+
+                                                            }
+                                                        });
+                                            }
+
+                                        } else {
+
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                    //api.sendNotification(new Sender())
+                } else {
+                    Toast.makeText(Home.this, "Some field(s) empty!", Toast.LENGTH_SHORT).show();
+                }
+                //uploadImage();
+
+
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+
 
     }
 
@@ -350,24 +457,33 @@ public class Home extends AppCompatActivity
     }
 
     private void getCategories() {
-
+        Utils.getInstance().showLoader(this);
+        FirebaseRecyclerOptions<Category> options =
+                new FirebaseRecyclerOptions.Builder<Category>()
+                        .setQuery(dbRef, Category.class)
+                        .build();
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Category, MenuViewHolder>(
-                Category.class,
-                R.layout.item_view,
-                MenuViewHolder.class,
-                dbRef
-        ) {
+                options) {
+            @NonNull
             @Override
-            protected void populateViewHolder(MenuViewHolder viewHolder, Category model, int position) {
+            public MenuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return new MenuViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false));
+            }
+
+            @Override
+            public void onDataChanged() {
+                super.onDataChanged();
+                Utils.getInstance().dismissLoader();
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull MenuViewHolder viewHolder, int position, @NonNull Category model) {
                 viewHolder.foodName.setText(model.getName());
                 Picasso.with(Home.this).load(model.getImage()).placeholder(R.drawable.my_bg).into(viewHolder.foodImage);
 
 //
 //                final double viewWidthToBitmapWidthRatio = (double)viewHolder.foodImage.getWidth() / (double)bitmap.getWidth();
 //                viewHolder.foodImage.getLayoutParams().height = (int) (bitmap.getHeight() * viewWidthToBitmapWidthRatio);
-                final Category local = model;
-
-
                 viewHolder.onItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
@@ -452,8 +568,9 @@ public class Home extends AppCompatActivity
         if (id == R.id.nav_orders) {
             startActivity(new Intent(Home.this, OrderActivity.class));
         } else if (id == R.id.nav_message) {
-            Intent intent = new Intent(Home.this, SendMessage.class);
-            startActivity(intent);
+//            Intent intent = new Intent(Home.this, SendMessage.class);
+//            startActivity(intent);
+            showMessageDialog();
         } else if (id == R.id.nav_password) {
             changePasswordDialog();
 
@@ -580,20 +697,25 @@ public class Home extends AppCompatActivity
         alertDialog.show();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseRecyclerAdapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseRecyclerAdapter.stopListening();
+    }
+
+
     private void updateToken(String token) {
-        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference("Tokens");
+        Log.e("token", token);
+        DatabaseReference tokenRef = FirebaseDatabase.getInstance().getReference("User").child(Home.PHONE).child("token");
         Token toki = new Token(token, true);
 
-        tokenRef.child(Home.PHONE).setValue(toki).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-//                    Log.e("TokenUpdated", task.getResult().toString());
-
-                }
-                //                  Log.e(TAG, "onComplete: "+" Something went wrong" );
-            }
-        });
+        tokenRef.setValue(toki);
     }
 
     @Override

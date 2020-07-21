@@ -1,6 +1,6 @@
 package com.example.hp.foodiesserverside.ViewHolder;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,6 +20,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
 
     public TextView orderName;
+    public TextView estimateTime;
     public TextView orderStatus;
     public TextView orderPhone;
     public TextView oderAssignedTo;
@@ -35,6 +36,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
         super(itemView);
         orderName = itemView.findViewById(R.id.order_name);
         orderStatus = itemView.findViewById(R.id.order_status);
+        estimateTime = itemView.findViewById(R.id.expected_time);
         oderAssignedTo = itemView.findViewById(R.id.order_assigned_to);
         orderAddress = itemView.findViewById(R.id.order_address);
         orderPhone = itemView.findViewById(R.id.order_phone);
@@ -63,9 +65,11 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        menu.setHeaderTitle("Perform");
+        menu.setHeaderTitle("Actions");
 
-        menu.add(0, 0, getAdapterPosition(), "Update");
-        menu.add(0, 1, getAdapterPosition(), "Delete");
+        // menu.add(0, 0, getAdapterPosition(), "Update");
+        menu.add(0, 0, getAdapterPosition(), "Update Status");
+        menu.add(0, 1, getAdapterPosition(), "Delivery Time");
+        //menu.add(0, 1, getAdapterPosition(), "Cancel");
     }
 }

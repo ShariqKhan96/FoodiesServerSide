@@ -1,71 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fbutton="http://schemas.android.com/apk/res-auto">
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:orientation="vertical"
-        android:id="@+id/container"
 
 
         >
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/food_name"
+
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name"
+            android:hint="Title"
+            android:inputType="textCapSentences"
+
             android:textColorHint="@color/colorPrimary"
             android:textSize="34sp"
             app:met_baseColor="@color/colorPrimary"
             app:met_floatingLabel="highlight"
+
             app:met_primaryColor="@color/colorPrimary"
             app:met_singleLineEllipsis="true"
 
             />
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/food_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Description"
-            android:textColorHint="@color/colorPrimary"
-            android:textSize="34sp"
-            app:met_baseColor="@color/colorPrimary"
-            app:met_floatingLabel="highlight"
-            app:met_primaryColor="@color/colorPrimary"
-            app:met_singleLineEllipsis="true"
 
-            />
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/food_discount"
+            android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Discount"
-            android:inputType="number"
-            android:textColorHint="@color/colorPrimary"
-            android:textSize="34sp"
-            app:met_baseColor="@color/colorPrimary"
-            app:met_floatingLabel="highlight"
-            app:met_primaryColor="@color/colorPrimary"
-            app:met_singleLineEllipsis="true"
+            android:hint="Message"
+            android:inputType="textCapSentences"
 
-            />
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/food_price"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Price"
-            android:inputType="number"
             android:textColorHint="@color/colorPrimary"
             android:textSize="34sp"
             app:met_baseColor="@color/colorPrimary"
             app:met_floatingLabel="highlight"
+
             app:met_primaryColor="@color/colorPrimary"
             app:met_singleLineEllipsis="true"
 
@@ -74,23 +54,24 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
             android:orientation="horizontal"
+            android:weightSum="2"
 
             >
 
             <info.hoang8f.widget.FButton
                 android:id="@+id/select"
                 android:layout_width="0dp"
-                android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_alignParentBottom="true"
+                android:layout_margin="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="2"
                 android:text="Select Image"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
+                android:visibility="gone"
                 fbutton:cornerRadius="4dp"
                 fbutton:fButtonColor="@color/colorPrimary"
                 fbutton:shadowColor="@android:color/black"

@@ -5,27 +5,31 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+
+import com.example.hp.foodiesserverside.model.Category;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.transition.SidePropagation;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.hp.foodiesserverside.Interface.ItemClickListener;
 import com.example.hp.foodiesserverside.ViewHolder.FoodViewHolder;
-import com.example.hp.foodiesserverside.model.Category;
 import com.example.hp.foodiesserverside.model.foods;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -40,8 +44,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import info.hoang8f.widget.FButton;
-import io.codetail.animation.ArcAnimator;
-import io.codetail.animation.Side;
 
 public class Foods extends AppCompatActivity {
 
@@ -282,26 +284,63 @@ public class Foods extends AppCompatActivity {
         }
     }
 
-    private void loadFoodList() {
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<foods, FoodViewHolder>(foods.class, R.layout.item_view,
-                FoodViewHolder.class,
-                dbRef.orderByChild("MenuId").equalTo(key)) {
-            @Override
-            protected void populateViewHolder(FoodViewHolder viewHolder, foods model, int position) {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseRecyclerAdapter.startListening();
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseRecyclerAdapter.stopListening();
+    }
+
+    private void loadFoodList() {
+        FirebaseRecyclerOptions<foods> options =
+                new FirebaseRecyclerOptions.Builder<foods>()
+                        .setQuery(dbRef.orderByChild("MenuId").equalTo(key), foods.class)
+                        .build();
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<foods, FoodViewHolder>(options
+        ) {
+            @NonNull
+            @Override
+            public FoodViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return new FoodViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false));
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull FoodViewHolder viewHolder, int position, @NonNull foods model) {
                 viewHolder.foodName.setText(model.Name);
                 Picasso.with(Foods.this).load(model.Image).placeholder(R.drawable.my_bg).into(viewHolder.foodImage);
 
-                final foods Model = model;
+                //final foods Model = model;
 
                 viewHolder.onItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-                        Toast.makeText(Foods.this, Model.Name, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Foods.this, model.Name, Toast.LENGTH_SHORT).show();
 
                     }
                 });
             }
+
+//            @Override
+//            protected void populateViewHolder(FoodViewHolder viewHolder, foods model, int position) {
+//
+//                viewHolder.foodName.setText(model.Name);
+//                Picasso.with(Foods.this).load(model.Image).placeholder(R.drawable.my_bg).into(viewHolder.foodImage);
+//
+//                final foods Model = model;
+//
+//                viewHolder.onItemClickListener(new ItemClickListener() {
+//                    @Override
+//                    public void onClick(View view, int position, boolean isLongClick) {
+//                        Toast.makeText(Foods.this, Model.Name, Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
+//            }
         };
         firebaseRecyclerAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(firebaseRecyclerAdapter);

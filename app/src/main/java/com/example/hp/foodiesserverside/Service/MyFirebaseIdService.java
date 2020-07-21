@@ -1,6 +1,6 @@
 package com.example.hp.foodiesserverside.Service;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.example.hp.foodiesserverside.Home;
@@ -36,7 +36,7 @@ public class MyFirebaseIdService extends FirebaseInstanceIdService {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Log.e("TokenUpdated", task.getResult().toString());
+                    //Log.e("TokenUpdated", task.getResult().toString());
 
                 } else
                     Log.e(TAG, "onComplete: " + " Something went wrong");

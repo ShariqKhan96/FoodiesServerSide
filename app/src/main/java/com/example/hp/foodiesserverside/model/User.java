@@ -1,20 +1,26 @@
 package com.example.hp.foodiesserverside.model;
 
 public class User {
-    public String isStaff, Password, name, restaurantId, secureCode, homeAddress, balance;
+    public String Password;
+    public String Name;
+    public String Phone;
+    public String security_code;
+    public String isStaff;
+    public Address home;
+    public Token token;
+
+
 
     public User() {
     }
 
-    public User(String isStaff, String password, String name, String restaurantId, String secureCode, String homeAddress, String balance) {
+    public User(String password, String name, String phone, String security_code, String isStaff, Address home,Token token) {
+        Password = password;
+        Name = name;
+        this.token = token;
+        Phone = phone;
+        this.security_code = security_code;
         this.isStaff = isStaff;
-        this.Password = password;
-        this.name = name;
-        this.restaurantId = restaurantId;
-        this.secureCode = secureCode;
-        this.homeAddress = homeAddress;
-        this.balance = balance;
+        this.home = home;
     }
-
-
 }

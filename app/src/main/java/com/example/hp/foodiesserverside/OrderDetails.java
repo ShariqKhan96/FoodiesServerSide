@@ -1,9 +1,9 @@
 package com.example.hp.foodiesserverside;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.example.hp.foodiesserverside.ViewHolder.OrderDetailAdapter;
@@ -50,7 +50,7 @@ public class OrderDetails extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ordercomment.setText(dataSnapshot.child("comment").getValue().toString());
-                ordertotal.setText(dataSnapshot.child("total").getValue().toString());
+                ordertotal.setText("Rs. " + dataSnapshot.child("total").getValue().toString());
                 orderaddress.setText(dataSnapshot.child("address").getValue().toString());
                 orderphone.setText(dataSnapshot.child("phone").getValue().toString());
             }
@@ -66,11 +66,11 @@ public class OrderDetails extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot ds : dataSnapshot.getChildren()
-                        ) {
+                ) {
                     Order order = ds.getValue(Order.class);
                     String name = ds.child("name").getValue().toString();
 
-                    Double localTotal = Double.valueOf(ds.child("quantity").getValue().toString())*(Double.valueOf(ds.child("price").getValue().toString()));
+                    Double localTotal = Double.valueOf(ds.child("quantity").getValue().toString()) * (Double.valueOf(ds.child("price").getValue().toString()));
 
                     orderList.add(new Order(name, order.discount, String.valueOf(localTotal), order.quantity));
                 }
@@ -88,7 +88,7 @@ public class OrderDetails extends AppCompatActivity {
 
     private void initTextViews() {
         orderid = findViewById(R.id.order_id);
-        orderid.setText(order_id_value);
+        orderid.setText("#" + order_id_value);
         ordercomment = findViewById(R.id.order_comment);
         orderaddress = findViewById(R.id.order_address);
         ordertotal = findViewById(R.id.order_total);

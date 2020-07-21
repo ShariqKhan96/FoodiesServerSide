@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -61,9 +61,9 @@ public class SigninActivity extends AppCompatActivity {
                             if (user != null) {
                                 if (user.isStaff.equals("true") && user.Password.equals(password.getText().toString())) {
                                     SharedPreferences.Editor edit = getSharedPreferences("SharedPreferences", MODE_PRIVATE).edit();
-                                    edit.putString("name", user.name);
+                                    edit.putString("name", user.Name);
                                     edit.putString("phone", phoneNumber.getText().toString());
-                                    edit.putString("code", user.secureCode);
+                                    edit.putString("code", user.security_code);
                                     //edit.putString("password", dataSnapshot.child(phoneNumber.getText().toString()).child("Password").getValue().toString());
                                     edit.putString("isStaff", user.isStaff);
                                     edit.apply();
@@ -72,8 +72,8 @@ public class SigninActivity extends AppCompatActivity {
                                     passToVerify = user.Password;
                                     intent.putExtra("password", passToVerify);
                                     intent.putExtra("phone", phoneNumber.getText().toString());
-                                    intent.putExtra("name", user.name);
-                                    intent.putExtra("code", user.secureCode);
+                                    intent.putExtra("name", user.Name);
+                                    intent.putExtra("code", user.security_code);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
 

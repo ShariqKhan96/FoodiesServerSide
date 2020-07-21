@@ -5,11 +5,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -17,12 +17,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.hp.foodiesserverside.Interface.ItemClickListener;
-import com.example.hp.foodiesserverside.ViewHolder.BannerViewHolder;
 import com.example.hp.foodiesserverside.ViewHolder.MenuViewHolder;
 import com.example.hp.foodiesserverside.adapter.BannerAdapter;
 import com.example.hp.foodiesserverside.model.Banner;
 import com.example.hp.foodiesserverside.model.Category;
-import com.example.hp.foodiesserverside.model.foods;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -30,7 +28,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -282,31 +279,31 @@ public class BannerMng extends AppCompatActivity {
             }
         });
     }
-
-    private void loadBannerItems() {
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Banner, MenuViewHolder>(
-                Banner.class,
-                R.layout.banner_item_view,
-                MenuViewHolder.class,
-                BannerDataBase
-        ) {
-            @Override
-            protected void populateViewHolder(MenuViewHolder viewHolder, Banner model, int position) {
-
-                viewHolder.foodName.setText(model.name);
-                Picasso.with(BannerMng.this).load(model.image).into(viewHolder.foodImage);
-                viewHolder.onItemClickListener(new ItemClickListener() {
-                    @Override
-                    public void onClick(View view, int position, boolean isLongClick) {
-
-                    }
-                });
-            }
-
-        };
-        firebaseRecyclerAdapter.notifyDataSetChanged();
-        bannerList.setAdapter(firebaseRecyclerAdapter);
-    }
+//
+//    private void loadBannerItems() {
+//        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Banner, MenuViewHolder>(
+//                Banner.class,
+//                R.layout.banner_item_view,
+//                MenuViewHolder.class,
+//                BannerDataBase
+//        ) {
+//            @Override
+//            protected void populateViewHolder(MenuViewHolder viewHolder, Banner model, int position) {
+//
+//                viewHolder.foodName.setText(model.name);
+//                Picasso.with(BannerMng.this).load(model.image).into(viewHolder.foodImage);
+//                viewHolder.onItemClickListener(new ItemClickListener() {
+//                    @Override
+//                    public void onClick(View view, int position, boolean isLongClick) {
+//
+//                    }
+//                });
+//            }
+//
+//        };
+//        firebaseRecyclerAdapter.notifyDataSetChanged();
+//        bannerList.setAdapter(firebaseRecyclerAdapter);
+//    }
 
     private void uploadImage() {
 

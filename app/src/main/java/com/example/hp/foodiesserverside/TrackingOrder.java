@@ -2,11 +2,11 @@ package com.example.hp.foodiesserverside;
 
 import android.app.ProgressDialog;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.support.v4.app.FragmentActivity;
+
+import androidx.fragment.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
@@ -31,10 +31,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class TrackingOrder extends FragmentActivity implements OnMapReadyCallback, RoutingListener {
 
@@ -93,8 +91,10 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
         builder.include(startPoint);
         builder.include(endPoint);
         LatLngBounds bounds = builder.build();
-
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+        final int width = getResources().getDisplayMetrics().widthPixels;
+        final int height = getResources().getDisplayMetrics().heightPixels;
+        final int minMetric = Math.min(width, height);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, 100);
         mMap.animateCamera(cu);
 
         track();
@@ -113,6 +113,7 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
 
     private void addMarkers(Location latLng) {
         mMap.clear();
+        endPoint = new LatLng(destinationLat, destinationLng);
         mMap.addMarker(new MarkerOptions().position(endPoint).title("Destination"));
         mMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)).title("Rider"));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latLng.latitude, latLng.longitude), 13));
@@ -225,7 +226,12 @@ public class TrackingOrder extends FragmentActivity implements OnMapReadyCallbac
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mMap.clear();
                 Location latLng = dataSnapshot.getValue(com.example.hp.foodiesserverside.model.Location.class);
-                addMarkers(latLng);
+                try {
+                    addMarkers(latLng);
+                } catch (Exception e) {
+                    Toast.makeText(TrackingOrder.this, "Wait for shipper to start trip!", Toast.LENGTH_SHORT).show();
+                }
+
             }
 
             @Override

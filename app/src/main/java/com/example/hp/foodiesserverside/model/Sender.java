@@ -1,5 +1,7 @@
 package com.example.hp.foodiesserverside.model;
 
+import java.util.Map;
+
 /**
  * Created by hp on 3/7/2018.
  */
@@ -7,9 +9,11 @@ package com.example.hp.foodiesserverside.model;
 public class Sender {
     public String to;
     public Notification notification;
+    public Map<String,String> data;
 
     public Sender() {
     }
+
 
     public String getTo() {
         return to;
@@ -27,9 +31,17 @@ public class Sender {
         this.notification = notification;
     }
 
-    public Sender(String to, Notification notification) {
+    public Map<String, String> getData() {
+        return data;
+    }
 
+    public void setData(Map<String, String> data) {
+        this.data = data;
+    }
+
+    public Sender(String to, Notification notification, Map<String, String> data) {
         this.to = to;
         this.notification = notification;
+        this.data = data;
     }
 }

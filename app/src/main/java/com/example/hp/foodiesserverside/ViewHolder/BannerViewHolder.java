@@ -1,12 +1,11 @@
 package com.example.hp.foodiesserverside.ViewHolder;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.hp.foodiesserverside.Interface.ItemClickListener;
 import com.example.hp.foodiesserverside.R;
 import com.example.hp.foodiesserverside.model.Banner;
 

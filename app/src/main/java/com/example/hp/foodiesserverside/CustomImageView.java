@@ -3,13 +3,12 @@ package com.example.hp.foodiesserverside;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
 /**
  * Created by hp on 2/21/2018.
  */
 
-public class CustomImageView extends android.support.v7.widget.AppCompatImageView {
+public class CustomImageView extends androidx.appcompat.widget.AppCompatImageView {
     public CustomImageView(Context context)
     {
         super(context);

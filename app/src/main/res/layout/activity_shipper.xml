@@ -4,25 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
     android:orientation="vertical"
     tools:context=".ShipperActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/shippers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_shipper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:backgroundTint="@android:color/white"
         android:src="@drawable/ic_add"
-        android:tint="@android:color/white"
+        android:tint="@color/colorAccent"
         app:useCompatPadding="true">
 
-    </android.support.design.widget.FloatingActionButton>
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
 </RelativeLayout>

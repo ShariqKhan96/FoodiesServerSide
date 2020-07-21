@@ -18,12 +18,16 @@ public class Request {
     public String payment_method;
     public String orderId;
     public Shipper assigned_to;
+    public String estimate_time;
+    public String punch_status;
 
     public Request() {
     }
 
-    public Request(String phone, String orderId, String name, String address, String total, List<Order> orders, String status, String comment, String latLng, String payment_method, Shipper assigned_to) {
+    public Request(String phone, String punch_status, String orderId, String name, String address, String total, List<Order> orders, String status, String comment, String latLng, String payment_method, Shipper assigned_to, String estimate_time) {
         this.phone = phone;
+        this.punch_status = punch_status;
+        this.estimate_time = estimate_time;
         this.name = name;
         this.assigned_to = assigned_to;
         this.orderId = orderId;
